@@ -1,48 +1,46 @@
 import mongoose, {Document, Schema} from "mongoose";
 import bcrypt from 'bcrypt';
 
-interface Weight extends Document{
+export interface Weight {
     weight: number;
     unit: 'grams' | 'kg' | 'lbs';
 }
 
 const WeightSchema: Schema<Weight> = new mongoose.Schema({
-    weight: { type: Number, required: true },
-    unit: { type: String, enum: ['grams', 'kg', 'lbs'], required: true }
-});
+    weight: { type: Number },
+    unit: { type: String, enum: ['grams', 'kg', 'lbs'] }
+}, { _id: false });
 
-interface Set extends Document{
+export interface Set{
     reps: number;
     weight: Weight;
 }
 
 const SetSchema: Schema<Set> = new mongoose.Schema({
-    reps: { type: Number, required: true },
-    weight: { type: WeightSchema, required: true }
-});
+    reps: { type: Number},
+    weight: { type: WeightSchema}
+}, { _id: false });
 
-interface Exercise extends Document{
+export interface Exercise{
     exercise_name: string;
     sets: {set :Set, time: Date}[];
     goal: Set;
     goalDueDate: Date;
-    currentBest: Set;
 }
 
 const ExerciseSchema: Schema<Exercise> = new mongoose.Schema({
-    exercise_name: { type: String, required: true },
+    exercise_name: { type: String, required: true, unique: true },
     sets: [
         {
-            set: { type: SetSchema, required: true },
-            time: { type: Date, required: true }
+            set: { type: SetSchema},
+            time: { type: Date }
         }
     ],
     goal: { type: SetSchema, required: true },
     goalDueDate: { type: Date, required: true },
-    currentBest: { type: SetSchema, required: true }
 });
 
-interface Nutrition extends Document{
+export interface Nutrition{
     calories: number;
     protein: number;
     carbs: number;
@@ -56,9 +54,9 @@ const NutritionSchema: Schema<Nutrition> = new mongoose.Schema({
     carbs: { type: Number, required: true },
     fats: { type: Number, required: true },
     fiber: { type: Number, required: true }
-});
+}, {_id: false});
 
-interface Food extends Document{
+export interface Food extends Document{
     food_name: string;
     quantity: number | string | Weight;
     nutritional_value: Nutrition;
@@ -73,7 +71,7 @@ const FoodSchema: Schema<Food> = new mongoose.Schema({
     nutritional_value: { type: NutritionSchema, required: true }
 });
 
-interface Diet extends Document{
+export interface Diet extends Document{
     intake: {food :Food, time: Date}[];
     daily_goal: [Food];
 }
