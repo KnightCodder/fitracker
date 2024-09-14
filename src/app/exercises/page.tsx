@@ -1,10 +1,10 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import Modal from '@/component/Modal';
-import AddExerciseForm from '@/component/AddExerciseForm';
+import Modal from '@/components/Modal';
+import AddExerciseForm from '@/components/AddExerciseForm';
 import { Exercise } from '@/models/User';
-import ExerciseCard from '@/component/Exercises';
+import ExerciseCard from '@/components/Exercises';
 
 export default function ExercisePage() {
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
@@ -58,7 +58,7 @@ export default function ExercisePage() {
       <div>
         <h2 className="text-xl font-semibold">Your Exercises</h2>
 
-        <div className='m-8'>
+        <div className="m-6">
         {exercises.length > 0 ? (
           exercises.map((exercise, index) => (
             <ExerciseCard exercise={exercise} />

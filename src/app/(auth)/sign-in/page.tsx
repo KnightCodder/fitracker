@@ -3,32 +3,32 @@
 import { useState } from "react";
 import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
+import { signInSchema } from "@/schemas/signInSchema";
+import { Button } from "@/components/ui/button";
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
+import Link from "next/link";
 
 const SignInPage: React.FC = () => {
   const router = useRouter();
-  const [formData, setFormData] = useState({
-    identifier: "",
-    password: "",
+  const form = useForm<z.infer<typeof signInSchema>>({
+    resolver: zodResolver(signInSchema),
+    defaultValues: {
+      identifier: '',
+      password: '',
+    },
   });
   const [error, setError] = useState("");
 
-  // Handle form input changes
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
-  };
-
   // Handle form submission
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-
+  const handleSubmit = async (values: z.infer<typeof signInSchema>) => {
     const result = await signIn("credentials", {
       redirect: false,
-      identifier: formData.identifier,
-      password: formData.password,
+      identifier: values.identifier,
+      password: values.password,
     });
 
     if (result?.error) {
@@ -45,56 +45,66 @@ const SignInPage: React.FC = () => {
   };
 
   return (
-    <div className="flex justify-center items-center h-screen">
-      <div className="w-full max-w-md bg-white p-6 rounded-lg shadow-md">
-        <h2 className="text-2xl font-bold mb-6">Sign In</h2>
+    <div className="flex min-h-screen items-center justify-center bg-gray-100">
+      <div className="w-full max-w-md p-8 space-y-6 bg-white shadow-lg rounded-lg">
+        <h1 className="text-2xl font-bold text-center text-gray-900">Sign In</h1>
+        
         {error && (
-          <div className="mb-4 text-red-600">
-            <p>{error}</p>
-          </div>
+          <div className="text-red-600 text-sm text-center">{error}</div>
         )}
-        <form onSubmit={handleSubmit}>
-          <div className="mb-4">
-            <label
-              htmlFor="identifier"
-              className="block text-gray-700 font-bold mb-2"
-            >
-              Username or Email:
-            </label>
-            <input
-              type="text"
-              id="identifier"
+
+        <Form {...form}>
+          <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-6">
+            <FormField
+              control={form.control}
               name="identifier"
-              value={formData.identifier}
-              onChange={handleChange}
-              required
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-indigo-500"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Username or Email</FormLabel>
+                  <FormControl>
+                    <Input
+                      placeholder="fitracker"
+                      {...field}
+                      className="border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                    />
+                  </FormControl>
+                </FormItem>
+              )}
             />
-          </div>
-          <div className="mb-4">
-            <label
-              htmlFor="password"
-              className="block text-gray-700 font-bold mb-2"
-            >
-              Password:
-            </label>
-            <input
-              type="password"
-              id="password"
+
+            <FormField
+              control={form.control}
               name="password"
-              value={formData.password}
-              onChange={handleChange}
-              required
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-indigo-500"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Password</FormLabel>
+                  <FormControl>
+                    <Input
+                      type="password"
+                      placeholder="password"
+                      {...field}
+                      className="border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                    />
+                  </FormControl>
+                </FormItem>
+              )}
             />
-          </div>
-          <button
-            type="submit"
-            className="w-full bg-indigo-600 text-white py-2 px-4 rounded-lg hover:bg-indigo-700 focus:outline-none focus:bg-indigo-700"
-          >
-            Sign In
-          </button>
-        </form>
+
+            <Button
+              type="submit"
+              className="w-full py-2 font-semibold text-white bg-blue-600 rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            >
+              Sign In
+            </Button>
+          </form>
+        </Form>
+
+        <p className="text-sm text-center text-gray-600">
+          Don't have an account?{" "}
+          <Link href="/sign-up" className="text-blue-600 hover:underline">
+            Sign up here
+          </Link>
+        </p>
       </div>
     </div>
   );

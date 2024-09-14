@@ -5,7 +5,7 @@ import UserModel from "@/models/User";
 
 export async function POST(req: NextRequest) {
     try {
-        dbConnect();
+        await dbConnect();
 
         const { username, email, firstName, lastName, DOB, password } = await req.json();
         const decodedEmail = decodeURIComponent(email);
@@ -43,7 +43,7 @@ export async function POST(req: NextRequest) {
                 existingUserByEmail.username = username;
                 existingUserByEmail.firstName = firstName;
                 existingUserByEmail.lastName = lastName;
-                existingUserByEmail.DOB = new Date(DOB);
+                existingUserByEmail.DOB = DOB;
                 existingUserByEmail.verifyCodeExpiry = new Date(Date.now() + 60*1000);
 
                 await existingUserByEmail.save();

@@ -2,6 +2,7 @@
 
 import { signOut } from "next-auth/react";
 import { useRouter } from "next/navigation";
+import { Button } from "./ui/button";
 
 const LogoutButton: React.FC = () => {
   const router = useRouter();
@@ -12,12 +13,12 @@ const LogoutButton: React.FC = () => {
   };
 
   return (
-    <button
+    <Button
       onClick={handleLogout}
-      className="bg-red-600 text-white py-2 px-4 rounded-lg hover:bg-red-700"
+      variant={'destructive'}
     >
       Logout
-    </button>
+    </Button>
   );
 };
 
