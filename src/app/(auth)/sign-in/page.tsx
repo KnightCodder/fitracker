@@ -100,7 +100,7 @@ const SignInPage: React.FC = () => {
         </Form>
 
         <p className="text-sm text-center text-gray-600">
-          Don't have an account?{" "}
+          Dont have an account?{" "}
           <Link href="/sign-up" className="text-blue-600 hover:underline">
             Sign up here
           </Link>

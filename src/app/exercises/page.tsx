@@ -60,8 +60,10 @@ export default function ExercisePage() {
 
         <div className="m-6">
         {exercises.length > 0 ? (
-          exercises.map((exercise, index) => (
+          exercises.map((exercise) => (
+            <li key={exercise.exercise_name}>
             <ExerciseCard exercise={exercise} />
+            </li>
           ))
         ) : (
           <p>No exercises found</p>
