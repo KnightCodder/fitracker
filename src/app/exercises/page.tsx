@@ -56,27 +56,30 @@ export default function ExercisePage() {
   return (
     <div className="p-8">
       <div>
-        <h2 className="text-xl font-semibold">Your Exercises</h2>
+        <div className='flex justify-between items-center'>
+          <h2 className="text-2xl font-semibold mx-auto">Your Exercises</h2>
+
+          <button
+            onClick={() => setIsModalOpen(true)}
+            className="bg-green-500 text-white px-4 py-2 mr-11 rounded hover:bg-green-600"
+          >
+            Add Exercise
+          </button>
+        </div>
 
         <div className="m-6">
-        {exercises.length > 0 ? (
-          exercises.map((exercise) => (
-            <li key={exercise.exercise_name}>
-            <ExerciseCard exercise={exercise} />
-            </li>
-          ))
-        ) : (
-          <p>No exercises found</p>
-        )}
+          {exercises.length > 0 ? (
+            exercises.map((exercise) => (
+              <div key={exercise.exercise_name}>
+                <ExerciseCard exercise={exercise} />
+              </div>
+            ))
+          ) : (
+            <p>No exercises found</p>
+          )}
         </div>
       </div>
 
-      <button
-        onClick={() => setIsModalOpen(true)}
-        className="bg-green-500 text-white p-2 rounded mt-4"
-      >
-        Add Exercise
-      </button>
 
       <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)}>
         <AddExerciseForm onSubmit={handleAddExercise} />

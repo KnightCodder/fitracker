@@ -11,32 +11,33 @@ export async function POST(req: NextRequest) {
         const decodedEmail = decodeURIComponent(email);
 
         if (!username || !email || !firstName || !lastName || !DOB || !password) {
-            console.log('all fields required')
-            return NextResponse.json({message: 'all fields are neccessary'}, {status: 400});
+            console.log('All fields are required');
+            return NextResponse.json({ message: 'All fields are necessary' }, { status: 400 });
         }
+
         const existingUserVerifiedByUsername = await UserModel.findOne({
             username,
             isVerified: true
         });
 
         if (existingUserVerifiedByUsername) {
-            console.log('username not available')
-            return Response.json({
+            console.log('Username not available');
+            return NextResponse.json({
                 success: false,
-                message: 'username is already taken'
-            }, {status: 400});
+                message: 'Username is already taken'
+            }, { status: 400 });
         }
 
-        const existingUserByEmail = await UserModel.findOne({email: decodedEmail});
+        const existingUserByEmail = await UserModel.findOne({ email: decodedEmail });
         const verifyCode = Math.floor(100000 + Math.random() * 900000).toString();
 
         if (existingUserByEmail) {
             if (existingUserByEmail.isVerified) {
-                console.log('user already exists with this email')
-                return Response.json({
+                console.log('User already exists with this email');
+                return NextResponse.json({
                     success: false,
-                    message: 'user alredy exist with this email'
-                }, {status: 400});
+                    message: 'User already exists with this email'
+                }, { status: 400 });
             } else {
                 existingUserByEmail.password = password;
                 existingUserByEmail.verifyCode = verifyCode;
@@ -44,7 +45,7 @@ export async function POST(req: NextRequest) {
                 existingUserByEmail.firstName = firstName;
                 existingUserByEmail.lastName = lastName;
                 existingUserByEmail.DOB = DOB;
-                existingUserByEmail.verifyCodeExpiry = new Date(Date.now() + 60*1000);
+                existingUserByEmail.verifyCodeExpiry = new Date(Date.now() + 60 * 1000);
 
                 await existingUserByEmail.save();
             }
@@ -66,25 +67,25 @@ export async function POST(req: NextRequest) {
             await newUser.save();
         }
 
-        // send verification email
+        // Send verification email
         const emailResponse = await sendVerificationEmail(email, username, verifyCode);
 
         if (!emailResponse) {
-            return Response.json({
+            return NextResponse.json({
                 success: false,
-                message: 'error sending verification code'
-            }, {status: 500})
+                message: 'Error sending verification code'
+            }, { status: 500 });
         }
 
-        return Response.json({
+        return NextResponse.json({
             success: true,
-            message: 'user registered successfully. Please verify your email'
-        }, {status: 201})
+            message: 'User registered successfully. Please verify your email'
+        }, { status: 201 });
     } catch (error) {
-        console.error('error registering user', error);
-        return Response.json({
+        console.error('Error registering user', error);
+        return NextResponse.json({
             success: false,
-            message: 'error registering user',
-        }, {status: 500});
+            message: 'Error registering user',
+        }, { status: 500 });
     }
 }

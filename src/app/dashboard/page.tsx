@@ -1,32 +1,55 @@
 'use client';
 
-import LogoutButton from "@/components/SignOut";
+import Navbar from "@/components/Navbar";
 import { useRouter } from "next/navigation";
+import Image from "next/image"; // Import Image from next/image
 
 export default function Dashboard() {
   const router = useRouter();
 
   return (
     <>
+      <Navbar />
 
-      <h1 className="text-2xl font-bold">Dashboard</h1>
+      <div className="flex flex-col items-center justify-center min-h-screen bg-gray-50 p-5">
+        <h1 className="text-4xl font-bold mb-8 text-gray-800">Dashboard</h1>
 
-      <div className="items-center justify-center m-5">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 w-full max-w-4xl">
+          {/* Exercise Block */}
+          <div
+            className="relative bg-slate-200 rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-300 ease-in-out cursor-pointer overflow-hidden"
+            onClick={() => router.push('/exercises')}
+          >
+            <Image
+              src="/exercise.jpg" // Add a relevant image for exercises
+              alt="Exercise"
+              width={400}
+              height={200}
+              className="object-cover w-full h-full"
+            />
+            <div className="absolute inset-0 flex items-center justify-center bg-slate-300 bg-opacity-70 rounded-lg text-lg font-semibold text-gray-800">
+              Exercise
+            </div>
+          </div>
 
-        <div className="bg-slate-200 h-32 w-60 items-center flex justify-center hover:scale-110 hover:bg-slate-300 my-5 mx-auto" onClick={() => {
-          router.push('/exercises');
-        }}>
-          Exercise
+          {/* Diet Block */}
+          <div
+            className="relative bg-slate-200 rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-300 ease-in-out cursor-pointer overflow-hidden"
+            onClick={() => router.push('/diet')}
+          >
+            <Image
+              src="/diet.webp" // Add a relevant image for diet
+              alt="Diet"
+              width={400}
+              height={200}
+              className="object-cover w-full h-full"
+            />
+            <div className="absolute inset-0 flex items-center justify-center bg-slate-300 bg-opacity-70 rounded-lg text-lg font-semibold text-gray-800">
+              Diet
+            </div>
+          </div>
         </div>
-
-        <div className="bg-slate-200 h-32 w-60 items-center flex justify-center hover:scale-110 hover:bg-slate-300 my-5 mx-auto" onClick={() => {
-          router.push('/diet');
-        }}>
-          Diet
-        </div>
-
       </div>
-      <LogoutButton />
     </>
   );
 }

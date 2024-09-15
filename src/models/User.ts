@@ -29,7 +29,7 @@ export interface Exercise{
 }
 
 const ExerciseSchema: Schema<Exercise> = new mongoose.Schema({
-    exercise_name: { type: String, required: true, unique: true },
+    exercise_name: { type: String, required: true },
     sets: [
         {
             set: { type: SetSchema},
@@ -56,16 +56,16 @@ const NutritionSchema: Schema<Nutrition> = new mongoose.Schema({
     fiber: { type: Number, required: true }
 }, {_id: false});
 
-export interface Food extends Document{
+export interface Food{
     food_name: string;
-    quantity: number | string | Weight;
+    quantity: number;
     nutritional_value: Nutrition;
 }
 
 const FoodSchema: Schema<Food> = new mongoose.Schema({
     food_name: { type: String, required: true },
     quantity: { 
-        type: mongoose.Schema.Types.Mixed, // Can be number, string, or Weight
+        type: Number, // Can be number, string, or Weight
         required: true 
     },
     nutritional_value: { type: NutritionSchema, required: true }
@@ -79,8 +79,8 @@ export interface Diet extends Document{
 const DietSchema: Schema<Diet> = new mongoose.Schema({
     intake: [
         {
-            food: { type: FoodSchema, required: true },
-            time: { type: Date, required: true }
+            food: { type: FoodSchema},
+            time: { type: Date }
         }
     ],
     daily_goal: [FoodSchema]
@@ -94,15 +94,15 @@ export interface Goal extends Document{
 }
 
 const GoalSchema: Schema<Goal> = new mongoose.Schema({
-    description: { type: String, required: true },
+    description: { type: String},
     weight: [
         {
-            weight: { type: WeightSchema, required: true },
-            time: { type: Date, required: true }
+            weight: { type: WeightSchema},
+            time: { type: Date}
         }
     ],
-    goal: { type: WeightSchema, required: true },
-    goalDueDate: { type: Date, required: true }
+    goal: { type: WeightSchema},
+    goalDueDate: { type: Date }
 });
 
 interface User extends Document{
@@ -117,6 +117,7 @@ interface User extends Document{
     isVerified: boolean;
     isPublic: boolean;
     workout: Exercise[];
+    foods: Food[];
     diet: Diet;
     goal: Goal;
     verifyPassword(password: string): Promise<boolean>;
@@ -133,10 +134,12 @@ const UserSchema: Schema<User> = new mongoose.Schema({
     verifyCodeExpiry: { type: Date, required: true },
     isVerified: { type: Boolean, default: false },
     isPublic: { type: Boolean, default: true },
-    workout: [ExerciseSchema],
-    diet: DietSchema,
-    goal: GoalSchema
+    workout: { type: [ExerciseSchema], default: [], required: true },
+    foods: { type: [FoodSchema], default: [], required: true },
+    diet: { type: DietSchema, default: undefined }, // Optional field
+    goal: { type: GoalSchema, default: undefined }  // Optional field
 });
+
 
 UserSchema.pre<User>('save', async function (next) {
     if (this.isModified('password')) {
