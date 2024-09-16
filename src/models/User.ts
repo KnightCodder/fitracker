@@ -1,4 +1,4 @@
-import mongoose, {Document, Schema} from "mongoose";
+import mongoose, { Document, Schema } from "mongoose";
 import bcrypt from 'bcrypt';
 
 export interface Weight {
@@ -11,19 +11,19 @@ const WeightSchema: Schema<Weight> = new mongoose.Schema({
     unit: { type: String, enum: ['grams', 'kg', 'lbs'] }
 }, { _id: false });
 
-export interface Set{
+export interface Set {
     reps: number;
     weight: Weight;
 }
 
 const SetSchema: Schema<Set> = new mongoose.Schema({
-    reps: { type: Number},
-    weight: { type: WeightSchema}
+    reps: { type: Number },
+    weight: { type: WeightSchema }
 }, { _id: false });
 
-export interface Exercise{
+export interface Exercise {
     exercise_name: string;
-    sets: {set :Set, time: Date}[];
+    sets: { set: Set, time: Date }[];
     goal: Set;
     goalDueDate: Date;
 }
@@ -32,7 +32,7 @@ const ExerciseSchema: Schema<Exercise> = new mongoose.Schema({
     exercise_name: { type: String, required: true },
     sets: [
         {
-            set: { type: SetSchema},
+            set: { type: SetSchema },
             time: { type: Date }
         }
     ],
@@ -40,7 +40,7 @@ const ExerciseSchema: Schema<Exercise> = new mongoose.Schema({
     goalDueDate: { type: Date, required: true },
 });
 
-export interface Nutrition{
+export interface Nutrition {
     calories: number;
     protein: number;
     carbs: number;
@@ -54,9 +54,9 @@ const NutritionSchema: Schema<Nutrition> = new mongoose.Schema({
     carbs: { type: Number, required: true },
     fats: { type: Number, required: true },
     fiber: { type: Number, required: true }
-}, {_id: false});
+}, { _id: false });
 
-export interface Food{
+export interface Food {
     food_name: string;
     quantity: number;
     nutritional_value: Nutrition;
@@ -64,48 +64,50 @@ export interface Food{
 
 const FoodSchema: Schema<Food> = new mongoose.Schema({
     food_name: { type: String, required: true },
-    quantity: { 
+    quantity: {
         type: Number, // Can be number, string, or Weight
-        required: true 
+        required: true
     },
     nutritional_value: { type: NutritionSchema, required: true }
 });
 
-export interface Diet extends Document{
-    intake: {food :Food, time: Date}[];
+export interface Diet {
+    intake: { food: Food, time: Date }[];
     daily_goal: [Food];
 }
 
 const DietSchema: Schema<Diet> = new mongoose.Schema({
-    intake: [
-        {
-            food: { type: FoodSchema},
-            time: { type: Date }
-        }
-    ],
-    daily_goal: [FoodSchema]
+    intake: {
+        type: [
+            {
+                food: { type: FoodSchema },
+                time: { type: Date }
+            }
+        ], default: []
+    },
+    daily_goal: { type: [FoodSchema], default: [] }
 });
 
-export interface Goal extends Document{
+export interface Goal {
     description: string;
-    weight: {weight: Weight, time: Date}[];
+    weight: { weight: Weight, time: Date }[];
     goal: Weight;
-    goalDueDate: Date; 
+    goalDueDate: Date;
 }
 
 const GoalSchema: Schema<Goal> = new mongoose.Schema({
-    description: { type: String},
-    weight: [
+    description: { type: String, default: '' },
+    weight: {type:[
         {
-            weight: { type: WeightSchema},
-            time: { type: Date}
+            weight: { type: WeightSchema },
+            time: { type: Date }
         }
-    ],
-    goal: { type: WeightSchema},
+    ], default: []},
+    goal: { type: WeightSchema },
     goalDueDate: { type: Date }
 });
 
-interface User extends Document{
+interface User extends Document {
     username: string;
     firstName: string;
     lastName: string;
@@ -125,10 +127,15 @@ interface User extends Document{
 
 const UserSchema: Schema<User> = new mongoose.Schema({
     username: { type: String, required: true, unique: true },
-    firstName: { type: String, required: true },
+    firstName: { type: String, requird: true },
     lastName: { type: String },
-    DOB: {type: Date, required: true},
-    email: { type: String, required: true, unique: true, match: [/.+\@.+\..+/, 'please use a valid email address'] },
+    DOB: { type: Date, required: true },
+    email: {
+        type: String,
+        required: true,
+        unique: true,
+        match: [/.+\@.+\..+/, 'please use a valid email address'],
+    },
     password: { type: String, required: true },
     verifyCode: { type: String, required: true },
     verifyCodeExpiry: { type: Date, required: true },
@@ -136,20 +143,22 @@ const UserSchema: Schema<User> = new mongoose.Schema({
     isPublic: { type: Boolean, default: true },
     workout: { type: [ExerciseSchema], default: [], required: true },
     foods: { type: [FoodSchema], default: [], required: true },
-    diet: { type: DietSchema, default: undefined }, // Optional field
-    goal: { type: GoalSchema, default: undefined }  // Optional field
+    // Adjust how default value is defined for the diet field
+    diet: { type: DietSchema, default: {}},
+    goal: { type: GoalSchema, default: {} }, // Optional field
 });
+
 
 
 UserSchema.pre<User>('save', async function (next) {
     if (this.isModified('password')) {
         const salt = await bcrypt.genSalt(10);
         this.password = await bcrypt.hash(this.password, salt);
-      }
-      next(); 
+    }
+    next();
 });
 
-UserSchema.methods.verifyPassword = async function (password:string): Promise<boolean> {
+UserSchema.methods.verifyPassword = async function (password: string): Promise<boolean> {
     return bcrypt.compare(password, this.password);
 }
 
