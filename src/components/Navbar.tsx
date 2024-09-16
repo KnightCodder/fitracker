@@ -23,14 +23,14 @@ export default function Navbar() {
       </div>
 
       {/* Center: Search Bar */}
-      <div className="relative w-1/3">
+      {/* <div className="relative w-1/3">
         <input
           type="text"
           placeholder="Search users..."
           className="w-full py-2 px-4 border rounded-full focus:outline-none focus:ring-2 focus:ring-indigo-500"
         />
         <FiSearch className="absolute right-3 top-3 text-gray-400" />
-      </div>
+      </div> */}
 
       {/* Right: Profile Icon */}
       <div className="relative">
