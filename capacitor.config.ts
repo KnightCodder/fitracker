@@ -1,9 +1,11 @@
-import type { CapacitorConfig } from '@capacitor/cli';
+import { CapacitorConfig } from '@capacitor/cli';
 
 const config: CapacitorConfig = {
   appId: 'com.KnightCodder.fitracker',
   appName: 'fitracker',
-  webDir: 'public'
+  server: {
+    url: 'https://fitracker-five.vercel.app/'
+  }
 };
 
 export default config;
