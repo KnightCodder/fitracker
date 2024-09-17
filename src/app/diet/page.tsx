@@ -145,7 +145,7 @@ export default function Diet() {
           </div>
 
           {isFoodsVisible && (
-            <div className="mt-4 flex space-y-4">
+            <div className="mt-4 flex flex-wrap gap-4">
               {foods.length > 0 ? (
                 foods.map((food, index) => (
                   <FoodCard key={index} food={food} />
