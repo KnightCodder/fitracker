@@ -1,4 +1,4 @@
-import mongoose, { Document, Schema } from "mongoose";
+import mongoose, { Collection, Document, Schema } from "mongoose";
 import bcrypt from 'bcrypt';
 
 export interface Weight {
@@ -146,7 +146,7 @@ const UserSchema: Schema<User> = new mongoose.Schema({
     // Adjust how default value is defined for the diet field
     diet: { type: DietSchema, default: {}},
     goal: { type: GoalSchema, default: {} }, // Optional field
-});
+}, { collection : 'Fitracker' });
 
 
 
